@@ -23,6 +23,7 @@ __email__ = "niniane at gmail dot com"
 
 import math
 import re
+import codecs
 from operator import itemgetter
 
 class TfIdf:
@@ -94,7 +95,7 @@ class TfIdf:
   def save_corpus_to_file(self, idf_filename, stopword_filename,
                           STOPWORD_PERCENTAGE_THRESHOLD = 0.01):
     """Save the idf dictionary and stopword list to the specified file."""
-    output_file = open(idf_filename, "w")
+    output_file = codecs.open(idf_filename, "w", encoding='utf-8')
 
     output_file.write(str(self.num_docs) + "\n")
     for term, num_docs in self.term_num_docs.items():

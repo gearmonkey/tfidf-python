@@ -96,6 +96,7 @@ class TfIdfTest(unittest.TestCase):
     self.assertAlmostEquals(get_exected_idf(my_tfidf.get_num_docs(), 5),
       my_tfidf.get_idf("said"))
 
+#need to add some utf-8 handling tests
 
 def main():
   unittest.main()
