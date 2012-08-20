@@ -3,6 +3,8 @@
 # Copyright 2009  Niniane Wang (niniane@gmail.com)
 # Reviewed by Alex Mendes da Costa.
 #
+# Modified in 2012 by Benjamin Fields (me@benfields.net)
+#
 # This is a simple Tf-idf library.  The algorithm is described in
 #   http://en.wikipedia.org/wiki/Tf-idf
 #
@@ -57,7 +59,7 @@ class TfIdf:
     self.idf_default = DEFAULT_IDF
 
     if corpus_filename:
-      corpus_file = open(corpus_filename, "r")
+      corpus_file = codecs.open(corpus_filename, "r", encoding='utf-8')
 
       # Load number of documents.
       line = corpus_file.readline()
