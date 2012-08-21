@@ -55,26 +55,15 @@ class TfIdf:
     """
     self.num_docs = 0
     self.term_num_docs = {}     # term : num_docs_containing_term
-    self.stopwords = []
+    self.stopwords = set([])
     self.idf_default = DEFAULT_IDF
 
     if corpus_filename:
-      corpus_file = codecs.open(corpus_filename, "r", encoding='utf-8')
-
-      # Load number of documents.
-      line = corpus_file.readline()
-      self.num_docs = int(line.strip())
-
-      # Reads "term:frequency" from each subsequent line in the file.
-      for line in corpus_file:
-       tokens = line.split(":")
-       term = tokens[0].strip()
-       frequency = int(tokens[1].strip())
-       self.term_num_docs[term] = frequency
+        self.merge_corpus_document(corpus_filename)
 
     if stopword_filename:
-      stopword_file = open(stopword_filename, "r")
-      self.stopwords = [line.strip() for line in stopword_file]
+      stopword_file = codecs.open(stopword_filename, "r", encoding='utf-8')
+      self.stopwords = set([line.strip() for line in stopword_file])
 
   def get_tokens(self, str):
     """Break a string into tokens, preserving URL tags as an entire token.
@@ -83,6 +72,33 @@ class TfIdf:
        Clients may wish to override this behavior with their own tokenization.
     """
     return re.findall(r"<a.*?/a>|<[^\>]*>|[\w'@#]+", str.lower())
+
+  def merge_corpus_document(self, corpus_filename):
+    """slurp in a corpus document, adding it to the existing corpus model
+    """
+    corpus_file = codecs.open(corpus_filename, "r", encoding='utf-8')
+
+    # Load number of documents.
+    line = corpus_file.readline()
+    self.num_docs += int(line.strip())
+
+    # Reads "term:frequency" from each subsequent line in the file.
+    for line in corpus_file:
+      tokens = line.rsplit(":",1)
+      term = tokens[0].strip()
+      try:
+          frequency = int(tokens[1].strip())
+      except IndexError, err:
+          if line in ("","\t"):
+              #catch blank lines
+              print "line is blank"
+              continue
+          else:
+              raise
+      if self.term_num_docs.has_key(term):
+        self.term_num_docs[term] += frequency
+      else:
+        self.term_num_docs[term] = frequency
 
   def add_input_document(self, input):
     """Add terms in the specified document to the idf dictionary."""
